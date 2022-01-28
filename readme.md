@@ -2,7 +2,7 @@
 
 This is a minimal tabline, that's it.
 
-![Screenshot](https://via.placeholder.com/208x150?text=App+Screenshot+Here)
+![Screenshot](./assets/screenshot.png)
 
 
 ## Installation
@@ -53,5 +53,5 @@ require('minimal-tabline').setup({
 - [crispgm/nvim-tabline](https://github.com/crispgm/nvim-tabline)
 - [alvarosevilla95/luatab.nvim](https://github.com/alvarosevilla95/luatab.nvim)
 - [johann2357/nvim-smartbufs](https://github.com/johann2357/nvim-smartbufs)
-- [kdheepak/tabline.nvim](https://github.com/kdheepak/tabline.nvim) 
+- [kdheepak/tabline.nvim](https://github.com/kdheepak/tabline.nvim)
 - [noib3/cokeline.nvim](https://github.com/noib3/cokeline.nvim)
