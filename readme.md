@@ -9,7 +9,6 @@ This is a minimal tabline, that's it.
 
 Make sure you are using Neovim (v0.6.0) or the latest neovim nightly.
 
-
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```viml
@@ -33,8 +32,8 @@ use {
 ```
 ## Customization
 
-The layout of the tabline is as follows ` <index> <filename> (<N of panes>)`.
-The `tab_index`, `pane_count` are turned on of by default but can be turned on as desired. This also counts for the `modified_sign` which can be turn off, its one by default.
+The layout of the tab is as follows `<index> <filename> <modified_sign> (<N of panes>)`.
+The `tab_index`, `pane_count` are turned off by default but can be turned on as desired. This also counts for the `modified_sign` which can be turn off, its on by default.
 
 ```lua
 require('minimal-tabline').setup({
