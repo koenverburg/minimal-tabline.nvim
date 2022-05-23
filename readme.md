@@ -38,6 +38,7 @@ The `tab_index`, `pane_count` are turned off by default but can be turned on as 
 ```lua
 require('minimal-tabline').setup({
   enable = true,
+  file_name = true,
   tab_index = false,
   pane_count = false,
   modified_sign = true,

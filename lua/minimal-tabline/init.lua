@@ -26,17 +26,23 @@ local function minimal(options)
       line = line .. " "
     end
 
-    local modified_sign = "%#ConradReset#" .. " "
+    local modified_sign = "%#ConradReset#"
 
     if options.modified_sign and buffer_modified == 1 then
-      modified_sign = " ●"
+      modified_sign = "●"
+    end
+  
+    local name = fn.fnamemodify(buffer_name, ":t") .. " "
+
+    if not options.file_name then
+      name = ""
     end
 
     if buffer_name ~= "" then
       if index == current_tab then
-        line = line .. "%#ConradActiveTabline#" .. fn.fnamemodify(buffer_name, ":t") .. modified_sign
+        line = line .. "%#ConradActiveTabline#" .. name .. modified_sign
       else
-        line = line .. "%#ConradInActiveTabline#" .. fn.fnamemodify(buffer_name, ":t") .. modified_sign
+        line = line .. "%#ConradInActiveTabline#" .. name .. modified_sign
       end
     else
       line = line .. options.no_name .. " "
@@ -56,6 +62,7 @@ function M.setup(options)
 
   M.options = vim.tbl_deep_extend("force", {
     enable = true,
+    file_name = false,
     tab_index = false,
     pane_count = false,
     modified_sign = true,
@@ -64,6 +71,10 @@ function M.setup(options)
 
   if M.options.tab_index == nil then
     M.options.tab_index = false
+  end
+
+  if M.options.file_name == nil then
+    M.options.file_name = true
   end
 
   if M.options.pane_count == nil then
