@@ -62,7 +62,7 @@ function M.setup(options)
 
   M.options = vim.tbl_deep_extend("force", {
     enable = true,
-    file_name = false,
+    file_name = true,
     tab_index = false,
     pane_count = false,
     modified_sign = true,
