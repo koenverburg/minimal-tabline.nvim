@@ -1,17 +1,18 @@
 local M = {}
 
-require("colorbuddy").setup()
-local c = require("colorbuddy.color").colors
-local s = require("colorbuddy.style").styles
-local Group = require("colorbuddy.group").Group
-
 local fn = vim.fn
 local fmt = string.format
 
-local SPACE = " "
-local RESET = "%#MTReset#"
-local ACTIVE = "%#MTActive#"
-local INACTIVE = "%#MTInactive#"
+local SPACE    = " "
+local RESET    = "%#MTReset#"
+local ACTIVE   = "%#MTActive#"
+
+vim.cmd [[ hi MTActive    gui=UnderLinebold ctermfg=none ctermbg=none ]]
+vim.cmd [[ hi MTReset     gui=none          ctermfg=none ctermbg=none ]]
+
+vim.cmd [[ hi TabLine     cterm=none ctermbg=none gui=none ]]
+vim.cmd [[ hi TabLineSel  cterm=none ctermbg=none gui=none ]]
+vim.cmd [[ hi TabLineFill cterm=none ctermbg=none gui=none ]]
 
 local function minimal(options)
   local line = ""
@@ -25,7 +26,6 @@ local function minimal(options)
     local buffer_name     = fn.bufname(buffer_number)
     local buffer_modified = fn.getbufvar(buffer_number, "&mod")
 
-    line = line .. "%" .. index .. "T"
     local name = fn.fnamemodify(buffer_name, ":t")
 
     if not options.file_name then
@@ -53,7 +53,7 @@ local function minimal(options)
         line = line .. name .. SPACE
       end
     else
-      line = line .. options.no_name .. SPACE
+      line = line .. ACTIVE .. options.no_name .. RESET .. SPACE
     end
   end
 
@@ -82,19 +82,5 @@ function M.setup(options)
     vim.opt.tabline = "%!v:lua.minimal_tabline()"
   end
 end
-
-M.setup()
-
-vim.cmd [[ highlight TabLine     cterm=none gui=none ]]
-vim.cmd [[ highlight TabLineSel  cterm=none gui=none ]]
-vim.cmd [[ highlight TabLineFill cterm=none gui=none ]]
-
-Group.new("MTActive", c.white:dark(), nil, s.bold + s.underline)
-Group.new("MTInactive", c.white:dark(), nil, s.NONE)
-Group.new("MTReset", nil, nil, nil)
-
-Group.new("TabLineFill", nil, nil, nil)
-Group.new("TabLine", nil, nil, nil)
-Group.new("TabLineSel", nil, nil, nil)
 
 return M
