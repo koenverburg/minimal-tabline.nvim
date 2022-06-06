@@ -1,5 +1,6 @@
 local M = {}
 
+require("colorbuddy").setup()
 local c = require("colorbuddy.color").colors
 local s = require("colorbuddy.style").styles
 local Group = require("colorbuddy.group").Group
@@ -7,53 +8,56 @@ local Group = require("colorbuddy.group").Group
 local fn = vim.fn
 local fmt = string.format
 
+local SPACE = " "
+local RESET = "%#MTReset#"
+local ACTIVE = "%#MTActive#"
+local INACTIVE = "%#MTInactive#"
+
 local function minimal(options)
   local line = ""
   local current_tab = fn.tabpagenr()
 
   for index = 1, fn.tabpagenr "$" do
-    local winnumber = fn.tabpagewinnr(index)
-    local buffer_list = fn.tabpagebuflist(index)
-    local buffnumber = buffer_list[winnumber]
-    local buffer_name = fn.bufname(buffnumber)
-    local buffer_modified = fn.getbufvar(buffnumber, "&mod")
+    local winnumber       = fn.tabpagewinnr(index)
+
+    local buffer_list     = fn.tabpagebuflist(index)
+    local buffer_number   = buffer_list[winnumber]
+    local buffer_name     = fn.bufname(buffer_number)
+    local buffer_modified = fn.getbufvar(buffer_number, "&mod")
 
     line = line .. "%" .. index .. "T"
-
-    if options.tab_index then
-      line = line .. index .. " "
-    else
-      line = line .. " "
-    end
-
-    local modified_sign = "%#ConradReset#"
-
-    if options.modified_sign and buffer_modified == 1 then
-      modified_sign = "●"
-    end
-  
-    local name = fn.fnamemodify(buffer_name, ":t") .. " "
+    local name = fn.fnamemodify(buffer_name, ":t")
 
     if not options.file_name then
       name = ""
     end
 
-    if buffer_name ~= "" then
-      if index == current_tab then
-        line = line .. "%#ConradActiveTabline#" .. name .. modified_sign
-      else
-        line = line .. "%#ConradInActiveTabline#" .. name .. modified_sign
-      end
+    if options.tab_index then
+      name = index .. SPACE .. name
     else
-      line = line .. options.no_name .. " "
+      name = SPACE .. name
+    end
+
+    if options.modified_sign and buffer_modified == 1 then
+      name = name .. SPACE .. "●"
     end
 
     if options.pane_count and #buffer_list > 1 then
-      line = line .. fmt("(%s) ", #buffer_list)
+      name = name .. SPACE .. fmt("(%s)", #buffer_list)
+    end
+
+    if buffer_name ~= "" then
+      if index == current_tab then
+        line = line .. ACTIVE .. name .. RESET .. SPACE
+      else
+        line = line .. name .. SPACE
+      end
+    else
+      line = line .. options.no_name .. SPACE
     end
   end
 
-  line = line .. "%#TabLineFill#"
+  line = line
   return line
 end
 
@@ -63,46 +67,34 @@ function M.setup(options)
   M.options = vim.tbl_deep_extend("force", {
     enable = true,
     file_name = true,
-    tab_index = false,
-    pane_count = false,
+    tab_index = true,
+    pane_count = true,
     modified_sign = true,
     no_name = "[No Name]",
   }, options)
-
-  if M.options.tab_index == nil then
-    M.options.tab_index = false
-  end
-
-  if M.options.file_name == nil then
-    M.options.file_name = true
-  end
-
-  if M.options.pane_count == nil then
-    M.options.pane_count = false
-  end
-
-  if M.options.modified_sign == nil then
-    M.options.modified_sign = false
-  end
-
-  if M.options.no_name == nil then
-    M.options.no_name = "[No Name]"
-  end
 
   function _G.minimal_tabline()
     return minimal(M.options)
   end
 
   if M.options.enable then
-    vim.o.showtabline = 2
-    vim.o.tabline = "%!v:lua.minimal_tabline()"
+    vim.opt.showtabline = 2
+    vim.opt.tabline = "%!v:lua.minimal_tabline()"
   end
 end
 
-Group.new("TabLineFill", c.white:dark(), nil, s.NONE)
-Group.new("ConradActiveTabline", c.white:dark(), nil, s.bold + s.underline)
-Group.new("ConradInActiveTabline", c.white:dark(), nil, s.NONE)
-Group.new("ConradReset", nil, nil, nil)
-Group.new("VertSplit", nil, nil, nil)
+M.setup()
+
+vim.cmd [[ highlight TabLine     cterm=none gui=none ]]
+vim.cmd [[ highlight TabLineSel  cterm=none gui=none ]]
+vim.cmd [[ highlight TabLineFill cterm=none gui=none ]]
+
+Group.new("MTActive", c.white:dark(), nil, s.bold + s.underline)
+Group.new("MTInactive", c.white:dark(), nil, s.NONE)
+Group.new("MTReset", nil, nil, nil)
+
+Group.new("TabLineFill", nil, nil, nil)
+Group.new("TabLine", nil, nil, nil)
+Group.new("TabLineSel", nil, nil, nil)
 
 return M
