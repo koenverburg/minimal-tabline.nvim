@@ -4,7 +4,6 @@ This is a minimal tabline, that's it.
 
 ![Screenshot](./assets/screenshot.png)
 
-
 ## Installation
 
 Make sure you are using Neovim (v0.6.0) or the latest neovim nightly.
@@ -12,23 +11,18 @@ Make sure you are using Neovim (v0.6.0) or the latest neovim nightly.
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```viml
-Plug 'tjdevries/colorbuddy.nvim'
 Plug 'koenverburg/minimal-tabline.nvim'
 ```
 
 Using [dein](https://github.com/Shougo/dein.vim)
 
 ```viml
-call dein#add('tjdevries/colorbuddy.nvim')
 call dein#add('koenverburg/minimal-tabline.nvim')
 ```
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
-use {
-  'koenverburg/minimal-tabline.nvim',
-  requires = { {'tjdevries/colorbuddy.nvim'} }
-}
+use 'koenverburg/minimal-tabline.nvim'
 ```
 ## Customization
 
@@ -42,6 +36,7 @@ require('minimal-tabline').setup({
   tab_index = false,
   pane_count = false,
   modified_sign = true,
+  hide_on_single_tab = true,
   no_name = '[No Name]'
 })
 ```
