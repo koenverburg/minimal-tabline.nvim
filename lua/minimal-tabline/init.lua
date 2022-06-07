@@ -7,12 +7,12 @@ local SPACE    = " "
 local RESET    = "%#MTReset#"
 local ACTIVE   = "%#MTActive#"
 
-vim.cmd [[ hi MTActive    gui=UnderLinebold ctermfg=none ctermbg=none ]]
-vim.cmd [[ hi MTReset     gui=none          ctermfg=none ctermbg=none ]]
-
-vim.cmd [[ hi TabLine     cterm=none ctermbg=none gui=none ]]
-vim.cmd [[ hi TabLineSel  cterm=none ctermbg=none gui=none ]]
-vim.cmd [[ hi TabLineFill cterm=none ctermbg=none gui=none ]]
+-- vim.cmd [[ hi MTActive    gui=UnderLinebold ctermfg=none ctermbg=none ]]
+-- vim.cmd [[ hi MTReset     gui=none          ctermfg=none ctermbg=none ]]
+--
+-- vim.cmd [[ hi TabLine     cterm=none ctermbg=none gui=none ]]
+-- vim.cmd [[ hi TabLineSel  cterm=none ctermbg=none gui=none ]]
+-- vim.cmd [[ hi TabLineFill cterm=none ctermbg=none gui=none ]]
 
 local function minimal(options)
   local line = ""
