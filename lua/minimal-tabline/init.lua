@@ -86,16 +86,15 @@ function M.setup(options)
   }, options)
 
   function _G.minimal_tabline()
+    for hl, col in pairs(colors_keys) do
+      highlight(hl, col)
+    end
     return minimal(M.options)
   end
 
   if M.options.enabled then
     vim.opt.showtabline = 2
     vim.opt.tabline = "%!v:lua.minimal_tabline()"
-
-    for hl, col in pairs(colors_keys) do
-      highlight(hl, col)
-    end
   end
 end
 
