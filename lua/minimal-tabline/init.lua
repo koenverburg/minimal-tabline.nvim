@@ -39,10 +39,12 @@ local function minimal(options)
 
     if not options.file_name then
       name = ""
+    else
+      name = " " .. name
     end
 
     if options.tab_index then
-      name = index .. SPACE .. name
+      name = index .. name
     else
       name = name
     end
@@ -78,7 +80,7 @@ function M.setup(options)
 
   M.options = vim.tbl_deep_extend("force", {
     enabled = true,
-    file_name = true,
+    file_name = false,
     tab_index = true,
     pane_count = false,
     modified_sign = true,
