@@ -20,11 +20,12 @@ local colors_keys = {
   TabLineSel = { fg = "none", bg = "none", style = "none" },
   TabLineFill = { fg = "none", bg = "none", style = "none" },
   MTReset = { fg = "none", bg = "none", style = "none" },
-  MTActive= { fg = "#ffffff", style="underline,bold" },
+  MTActive = { fg = "#ffffff", style = "underline,bold" },
 }
 
 local function minimal(options)
   local line = ""
+  local parts = {}
   local current_tab = fn.tabpagenr()
 
   for index = 1, fn.tabpagenr "$" do
@@ -37,39 +38,47 @@ local function minimal(options)
 
     local name = fn.fnamemodify(buffer_name, ":t")
 
-    if not options.file_name then
-      name = ""
-    else
-      name = " " .. name
-    end
-
-    if options.tab_index then
-      name = index .. name
-    else
-      name = name
-    end
-
-    if options.modified_sign and buffer_modified == 1 then
-      name = name .. SPACE .. "●"
-    end
-
-    if options.pane_count and #buffer_list > 1 then
-      name = name .. SPACE .. fmt("(%s)", #buffer_list)
-    end
+    table.insert(parts, SPACE)
 
     if buffer_name ~= "" then
       if index == current_tab then
-        line = line .. ACTIVE .. name .. RESET .. SPACE
-      else
-        line = line .. name .. SPACE
+        table.insert(parts, ACTIVE)
       end
     else
-      line = line .. ACTIVE .. options.no_name .. RESET .. SPACE
+      table.insert(parts, RESET)
     end
+
+    if options.tab_index then
+      table.insert(parts, index)
+    end
+
+    if options.tab_index and options.file_name then
+      table.insert(parts, SPACE)
+    end
+
+    if options.file_name then
+      table.insert(parts, name)
+    end
+
+    if options.modified_sign and buffer_modified == 1 then
+      table.insert(parts, RESET)
+      table.insert(parts, SPACE)
+      table.insert(parts, "●")
+    end
+
+    if options.pane_count and #buffer_list > 1 then
+      table.insert(parts, SPACE)
+      table.insert(parts, fmt("(%s)", #buffer_list))
+    end
+
+    table.insert(parts, RESET)
+    table.insert(parts, SPACE)
+
+    line = table.concat(parts, '')
+    -- print(#line)
   end
 
   line = line
-
   local width = fn.winwidth(0) - #line + 20
 
   return line .. string.rep("━", width)
