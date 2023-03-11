@@ -1,7 +1,7 @@
 local M = {}
 
-local fn = vim.fn
 local fmt = string.format
+local fn,api = vim.fn, vim.api
 
 local SPACE = " "
 local RESET = "%#MTReset#"
@@ -23,15 +23,46 @@ local colors_keys = {
   MTActive = { fg = "#ffffff", style = "underline,bold" },
 }
 
+local function calc_win_width()
+  local width = 0
+  local pages = {}
+
+  local current_tab = fn.tabpagenr()
+  local tabinfo = vim.fn.gettabinfo()
+
+  for _, tab in pairs(tabinfo) do
+    pages[tab.tabnr] = {}
+    for _, winid in pairs(tab.windows) do
+      local bufnr = fn.winbufnr(winid)
+      local name = api.nvim_buf_get_name(bufnr)
+
+      if name ~= '' then
+        pages[tab.tabnr][winid] = {
+          name = name,
+          bufnr = bufnr,
+          width = api.nvim_win_get_width(winid),
+          height = api.nvim_win_get_height(winid)
+        }
+      end
+    end
+  end
+
+  for _, wins in pairs(pages[current_tab]) do
+    width = width + wins.width + 1
+  end
+
+  return width
+end
+
 local function minimal(options)
   local line = ""
   local parts = {}
   local clean_parts = {}
-  local current_tab = fn.tabpagenr()
 
-  for index = 1, fn.tabpagenr "$" do
+  for index = 1, #vim.api.nvim_list_tabpages() do
     local win = fn.tabpagewinnr(index)
     local buffer_list = fn.tabpagebuflist(index)
+    local current_tab = fn.tabpagenr()
 
     local buffer_number = buffer_list[win]
     local buffer_name = fn.bufname(buffer_number)
@@ -57,11 +88,13 @@ local function minimal(options)
 
     if options.tab_index and options.file_name then
       table.insert(parts, SPACE)
+
       table.insert(clean_parts, SPACE)
     end
 
     if options.file_name then
       table.insert(parts, name)
+
       table.insert(clean_parts, name)
     end
 
@@ -69,6 +102,7 @@ local function minimal(options)
       table.insert(parts, RESET)
       table.insert(parts, SPACE)
       table.insert(parts, "●")
+
       table.insert(clean_parts, SPACE)
       table.insert(clean_parts, "x")
     end
@@ -76,23 +110,26 @@ local function minimal(options)
     if options.pane_count and #buffer_list > 1 then
       table.insert(parts, SPACE)
       table.insert(parts, fmt("(%s)", #buffer_list))
+
       table.insert(clean_parts, SPACE)
       table.insert(clean_parts, "xxx")
     end
 
     table.insert(parts, RESET)
     table.insert(parts, SPACE)
+
     table.insert(clean_parts, SPACE)
 
-    line = table.concat(parts, '')
+    line = table.concat(parts, "")
   end
 
   line = line
 
-  local offset = #table.concat(clean_parts, "")
-  local width = fn.winwidth(0) - offset
+  local winwidth = calc_win_width()
+  local offset = #table.concat(clean_parts, "") + 2
+  local width = winwidth - offset
 
-  return line .. string.rep("━", width)
+  return line .. string.rep("━", width) .. SPACE
 end
 
 function M.setup(options)
