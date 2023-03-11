@@ -26,19 +26,21 @@ local colors_keys = {
 local function minimal(options)
   local line = ""
   local parts = {}
+  local clean_parts = {}
   local current_tab = fn.tabpagenr()
 
   for index = 1, fn.tabpagenr "$" do
-    local winnumber = fn.tabpagewinnr(index)
-
+    local win = fn.tabpagewinnr(index)
     local buffer_list = fn.tabpagebuflist(index)
-    local buffer_number = buffer_list[winnumber]
+
+    local buffer_number = buffer_list[win]
     local buffer_name = fn.bufname(buffer_number)
     local buffer_modified = fn.getbufvar(buffer_number, "&mod")
 
     local name = fn.fnamemodify(buffer_name, ":t")
 
     table.insert(parts, SPACE)
+    table.insert(clean_parts, SPACE)
 
     if buffer_name ~= "" then
       if index == current_tab then
@@ -50,36 +52,45 @@ local function minimal(options)
 
     if options.tab_index then
       table.insert(parts, index)
+      table.insert(clean_parts, index)
     end
 
     if options.tab_index and options.file_name then
       table.insert(parts, SPACE)
+      table.insert(clean_parts, SPACE)
     end
 
     if options.file_name then
       table.insert(parts, name)
+      table.insert(clean_parts, name)
     end
 
     if options.modified_sign and buffer_modified == 1 then
       table.insert(parts, RESET)
       table.insert(parts, SPACE)
       table.insert(parts, "●")
+      table.insert(clean_parts, SPACE)
+      table.insert(clean_parts, "x")
     end
 
     if options.pane_count and #buffer_list > 1 then
       table.insert(parts, SPACE)
       table.insert(parts, fmt("(%s)", #buffer_list))
+      table.insert(clean_parts, SPACE)
+      table.insert(clean_parts, "xxx")
     end
 
     table.insert(parts, RESET)
     table.insert(parts, SPACE)
+    table.insert(clean_parts, SPACE)
 
     line = table.concat(parts, '')
-    -- print(#line)
   end
 
   line = line
-  local width = fn.winwidth(0) - #line + 20
+
+  local offset = #table.concat(clean_parts, "")
+  local width = fn.winwidth(0) - offset
 
   return line .. string.rep("━", width)
 end
