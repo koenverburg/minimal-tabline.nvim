@@ -125,11 +125,11 @@ local function minimal(options)
 
   line = line
 
-  local winwidth = calc_win_width()
-  local offset = #table.concat(clean_parts, "") + 2
-  local width = winwidth - offset
+  -- local winwidth = calc_win_width()
+  -- local offset = #table.concat(clean_parts, "") + 2
+  -- local width = winwidth - offset
 
-  return line .. string.rep("━", width) .. SPACE
+  return line -- .. string.rep("━", width) .. SPACE
 end
 
 function M.setup(options)
@@ -152,8 +152,13 @@ function M.setup(options)
   end
 
   if M.options.enabled then
-    vim.opt.showtabline = 2
-    vim.opt.tabline = "%!v:lua.minimal_tabline()"
+    local regenerate_autocmds = { "WinEnter", "WinLeave", "ModeChanged", "BufEnter" }
+    vim.api.nvim_create_autocmd(regenerate_autocmds, {
+      callback = function()
+        vim.opt.showtabline = 2
+        vim.opt.tabline = "%!v:lua.minimal_tabline()"
+      end,
+    })
   end
 end
 
