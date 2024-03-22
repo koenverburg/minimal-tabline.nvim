@@ -155,7 +155,7 @@ function M.setup(options)
     local regenerate_autocmds = { "WinEnter", "WinLeave", "ModeChanged", "BufEnter" }
     vim.api.nvim_create_autocmd(regenerate_autocmds, {
       callback = function()
-        vim.opt.showtabline = 2
+        vim.opt.showtabline = 1
         vim.opt.tabline = "%!v:lua.minimal_tabline()"
       end,
     })
